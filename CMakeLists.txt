@@ -33,4 +33,6 @@ tomahawk_add_plugin(vsxu
     LINK_LIBRARIES
         ${TOMAHAWK_LIBRARIES}
         ${VSXU_LIBRARIES}
+        ${QT_QTOPENGL_LIBRARIES}
+        ${OPENGL_LIBRARIES}
 )
