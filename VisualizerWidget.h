@@ -45,7 +45,6 @@ public:
     bool jumpToCurrentTrack() { return false; }
     QString description() const { return QString("Vovoid VSXu Music Visualizer"); }
     QString title() const{ return QString("Visualizer"); }
-    QIcon icon() const { return ImageRegistry::instance()->icon( RESPATH "images/visualizer.png" ); }
     QPixmap pixmap() const { return ImageRegistry::instance()->pixmap( RESPATH "images/visualizer.png", QSize( 0, 0 ) ); }
     Tomahawk::playlistinterface_ptr playlistInterface() const { return Tomahawk::playlistinterface_ptr(); }
     QWidget* widget(){ return this; }

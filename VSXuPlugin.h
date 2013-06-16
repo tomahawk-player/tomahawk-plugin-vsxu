@@ -20,6 +20,7 @@
 #define VSXUPLUGIN_H
 
 #include <infosystem/InfoSystem.h>
+#include <ViewPage.h>
 
 namespace Tomahawk
 {
@@ -44,7 +45,10 @@ protected slots:
     virtual void pushInfo( Tomahawk::InfoSystem::InfoPushData pushData );
 
 private slots:
-    void addViewPage();
+    void addViewPageLoader();
+
+private:
+    Tomahawk::ViewPage* viewPageLoader();
 };
 
 }

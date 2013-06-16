@@ -26,6 +26,8 @@
 
 #include <QCoreApplication>
 
+#include <boost/bind.hpp>
+
 
 Tomahawk::InfoSystem::VSXuPlugin::VSXuPlugin()
 {
@@ -45,19 +47,29 @@ Tomahawk::InfoSystem::VSXuPlugin::init()
     tDebug() << Q_FUNC_INFO;
 
     // HACK: we wait for Tomahawk (the MainWindow with the ViewManager to be ready) and use the DirectConnection to make addViewPage be called from the GUI thread
-    connect(QCoreApplication::instance(), SIGNAL( tomahawkLoaded() ), SLOT( addViewPage() ), Qt::DirectConnection );
+    connect(QCoreApplication::instance(), SIGNAL( tomahawkLoaded() ), SLOT( addViewPageLoader() ), Qt::DirectConnection );
 }
 
 
 void
-Tomahawk::InfoSystem::VSXuPlugin::addViewPage()
+Tomahawk::InfoSystem::VSXuPlugin::addViewPageLoader()
 {
     tLog() << Q_FUNC_INFO;
 
     // don't add this twice, for some reason tomahawkLoaded() is fired more than once
-    disconnect(QCoreApplication::instance(), SIGNAL( tomahawkLoaded() ), this, SLOT( addViewPage() ) );
+    disconnect(QCoreApplication::instance(), SIGNAL( tomahawkLoaded() ), this, SLOT( addViewPageLoader() ) );
 
-    ViewManager::instance()->addDynamicPage("Visualizer", new VisualizerWidget( 0 ) );
+    ViewManager::instance()->addDynamicPage("visualizer",
+                                            "Visualizer",
+                                            ImageRegistry::instance()->icon( RESPATH "images/visualizer.png" ),
+                                            boost::bind( &VSXuPlugin::viewPageLoader, this) );
+}
+
+
+Tomahawk::ViewPage*
+Tomahawk::InfoSystem::VSXuPlugin::viewPageLoader()
+{
+    return new VisualizerWidget( 0 );
 }
 
 
