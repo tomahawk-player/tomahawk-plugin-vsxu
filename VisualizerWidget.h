@@ -20,16 +20,19 @@
 #ifndef VISUALIZERWIDGET_H
 #define VISUALIZERWIDGET_H
 
+#include "ViewPage.h"
+#include "VSXuRenderer.h"
+
+#include <utils/ImageRegistry.h>
+
+#include <phonon/audiodataoutput.h>
+
 #include <QGLWidget>
 #include <QPixmap>
 #include <QResizeEvent>
 #include <QShowEvent>
 #include <QHideEvent>
 #include <QtOpenGL/QGLFormat>
-#include <phonon/audiodataoutput.h>
-
-#include "ViewPage.h"
-#include "VSXuRenderer.h"
 
 class VisualizerWidget : public QGLWidget,public Tomahawk::ViewPage
 {
@@ -40,9 +43,10 @@ public:
     ~VisualizerWidget();
 
     bool jumpToCurrentTrack() { return false; }
-    QString description() const { return QString("Music Visualizer"); }
-    QString title() const{ return QString("Vovoid VSXu"); }
-    QPixmap pixmap() const { return QPixmap( RESPATH "images/visualizer.png" ); }
+    QString description() const { return QString("Vovoid VSXu Music Visualizer"); }
+    QString title() const{ return QString("Visualizer"); }
+    QIcon icon() const { return ImageRegistry::instance()->icon( RESPATH "images/visualizer.png" ); }
+    QPixmap pixmap() const { return ImageRegistry::instance()->pixmap( RESPATH "images/visualizer.png", QSize( 0, 0 ) ); }
     Tomahawk::playlistinterface_ptr playlistInterface() const { return Tomahawk::playlistinterface_ptr(); }
     QWidget* widget(){ return this; }
     //TODO: Add the activate and deactivate methods, which can be called from  ViewManager.cpp
