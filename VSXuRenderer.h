@@ -30,7 +30,7 @@
 class vsx_manager_abs;
 
 #define SAMPLES 512
-#define CHANNELS 2
+#define BUFFERS 2
 
 class VisualizerWidget;
 class VSXuRenderer: public QThread
@@ -48,7 +48,7 @@ class VSXuRenderer: public QThread
 
     int m_width,m_height;
     // A double buffer for the sound data.
-    float m_soundData[CHANNELS][SAMPLES];
+    float m_soundData[BUFFERS][SAMPLES];
 
     //The Main Loop for VSXu Renderer
     void run();
