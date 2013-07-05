@@ -43,8 +43,9 @@ VSXuRenderer::VSXuRenderer(VisualizerWidget* parent)
         m_soundData[1][i] = 0;
     }
     //connecting the audio paths
-    connect ( AudioEngine::instance(),SIGNAL( audioDataReady( QMap<Phonon::AudioDataOutput::Channel, QVector<qint16> > ) ),
-	      this, SLOT( receiveAudioData(QMap<Phonon::AudioDataOutput::Channel,QVector<qint16> >)) );
+    connect ( AudioEngine::instance(),SIGNAL( audioDataReady(QMap<AudioEngine::AudioChannel,QVector<qint16> >) ) ,
+	      this, SLOT( receiveAudioData(QMap<AudioEngine::AudioChannel,QVector<qint16> >)) );
+    AudioEngine::instance()->activateDataOutput();
 }
 
 
@@ -83,44 +84,44 @@ VSXuRenderer::stop()
 }
 
 
-// void
-// VSXuRenderer::receiveAudioData(const QMap< Phonon::AudioDataOutput::Channel, QVector< qint16 > >& data)
-// {
-//     if ( data.size() <= 0 )
-//         return;
-//
-//     //decide which buffer to use
-//     m_mutex.lock();
-//     int buf = (int)m_frontbuffer;
-//     m_mutex.unlock();
-//
-//     //Making a local copy of the sound data for updating the sound data
-//     for (int i = 0; i < SAMPLES; i++)
-//     {
-//         m_soundData[buf][i] = 0;
-//         if( data.contains( Phonon::AudioDataOutput::LeftChannel ) )
-//             m_soundData[buf][i] += (float)(data[Phonon::AudioDataOutput::LeftChannel][i])/65536.0;
-//         if ( data.contains(Phonon::AudioDataOutput::LeftSurroundChannel) )
-//             m_soundData[buf][i] += (float)(data[Phonon::AudioDataOutput::LeftSurroundChannel][i])/65536.0;
-//
-//         if ( data.contains(Phonon::AudioDataOutput::RightChannel) )
-//             m_soundData[buf][i] += (float)(data[Phonon::AudioDataOutput::RightChannel][i])/65536.0;
-//         if ( data.contains(Phonon::AudioDataOutput::RightSurroundChannel) )
-//             m_soundData[buf][i] += (float)(data[Phonon::AudioDataOutput::RightSurroundChannel][i])/65536.0;
-//
-//         if ( data.contains(Phonon::AudioDataOutput::CenterChannel) )
-//             m_soundData[buf][i] += (float)(data[Phonon::AudioDataOutput::CenterChannel][i])/65536.0;
-//         if ( data.contains(Phonon::AudioDataOutput::SubwooferChannel) )
-//             m_soundData[buf][i] += (float)(data[Phonon::AudioDataOutput::SubwooferChannel][i])/65536.0;
-//
-//         m_soundData[buf][i] *= 3.5/(float)data.size();
-//     }
-//
-//     m_mutex.lock();
-//     m_doAudioUpdate = true;
-//     m_mutex.unlock();
-//
-// }
+void
+VSXuRenderer::receiveAudioData(const QMap< AudioEngine::AudioChannel, QVector< qint16 > > data)
+{
+    if ( data.size() <= 0 )
+        return;
+
+    //decide which buffer to use
+    m_mutex.lock();
+    int buf = (int)m_frontbuffer;
+    m_mutex.unlock();
+
+    //Making a local copy of the sound data for updating the sound data
+    for (int i = 0; i < SAMPLES; i++)
+    {
+        m_soundData[buf][i] = 0;
+        if( data.contains( AudioEngine::LeftChannel ) )
+            m_soundData[buf][i] += (float)(data[AudioEngine::LeftChannel][i])/65536.0;
+        if ( data.contains(AudioEngine::LeftSurroundChannel) )
+            m_soundData[buf][i] += (float)(data[AudioEngine::LeftSurroundChannel][i])/65536.0;
+
+        if ( data.contains(AudioEngine::RightChannel) )
+            m_soundData[buf][i] += (float)(data[AudioEngine::RightChannel][i])/65536.0;
+        if ( data.contains(AudioEngine::RightSurroundChannel) )
+            m_soundData[buf][i] += (float)(data[AudioEngine::RightSurroundChannel][i])/65536.0;
+
+        if ( data.contains(AudioEngine::CenterChannel) )
+            m_soundData[buf][i] += (float)(data[AudioEngine::CenterChannel][i])/65536.0;
+        if ( data.contains(AudioEngine::SubwooferChannel) )
+            m_soundData[buf][i] += (float)(data[AudioEngine::SubwooferChannel][i])/65536.0;
+
+        m_soundData[buf][i] *= 3.5/(float)data.size();
+    }
+
+    m_mutex.lock();
+    m_doAudioUpdate = true;
+    m_mutex.unlock();
+
+}
 
 
 void
@@ -249,6 +250,7 @@ VSXuRenderer::run()
 VSXuRenderer::~VSXuRenderer()
 {
     stop();
+    AudioEngine::instance()->deactivateDataOutput();
     if ( m_manager )
         manager_destroy(m_manager);
 }

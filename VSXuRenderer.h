@@ -30,6 +30,7 @@
 class vsx_manager_abs;
 
 #define SAMPLES 512
+#define CHANNELS 2
 
 class VisualizerWidget;
 class VSXuRenderer: public QThread
@@ -47,14 +48,14 @@ class VSXuRenderer: public QThread
 
     int m_width,m_height;
     // A double buffer for the sound data.
-    float m_soundData[2][SAMPLES];
+    float m_soundData[CHANNELS][SAMPLES];
 
     //The Main Loop for VSXu Renderer
     void run();
     void drawSplashScreen();
 
 private slots:
-//     void receiveAudioData( const QMap<Phonon::AudioDataOutput::Channel, QVector<qint16> >& );
+    void receiveAudioData( const QMap< AudioEngine::AudioChannel, QVector<qint16> > );
 
 public:
     VSXuRenderer(VisualizerWidget* parent);
