@@ -19,36 +19,35 @@
 #ifndef VSXUPLUGIN_H
 #define VSXUPLUGIN_H
 
-#include <infosystem/InfoSystem.h>
-#include <ViewPage.h>
+#include "VisualizerWidget.h"
+
+#include <ViewPagePlugin.h>
+#include <ViewPageLazyLoader.h>
 
 namespace Tomahawk
 {
 
-namespace InfoSystem
+namespace Widgets
 {
 
-class VSXuPlugin : public InfoPlugin
+class VSXuPlugin : public ViewPageLazyLoader< VisualizerWidget >
 {
-    Q_PLUGIN_METADATA( IID "org.tomahawk-player.Player.InfoPlugin" )
+    Q_PLUGIN_METADATA( IID "org.tomahawk-player.Player.ViewPagePlugin" )
     Q_OBJECT
-    Q_INTERFACES( Tomahawk::InfoSystem::InfoPlugin )
+    Q_INTERFACES( Tomahawk::ViewPagePlugin )
 
 public:
     VSXuPlugin();
     virtual ~VSXuPlugin();
 
-protected slots:
-    virtual void init();
-    virtual void getInfo( Tomahawk::InfoSystem::InfoRequestData requestData );
-    virtual void notInCacheSlot( Tomahawk::InfoSystem::InfoStringHash criteria, Tomahawk::InfoSystem::InfoRequestData requestData );
-    virtual void pushInfo( Tomahawk::InfoSystem::InfoPushData pushData );
+    virtual Tomahawk::playlistinterface_ptr playlistInterface() const;
 
-private slots:
-    void addViewPageLoader();
+    virtual const QString defaultName();
+    virtual QString title() const;
+    virtual QString description() const;
+    virtual const QString pixmapPath() const;
 
-private:
-    Tomahawk::ViewPage* viewPageLoader();
+    virtual bool jumpToCurrentTrack();
 };
 
 }

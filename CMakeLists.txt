@@ -24,8 +24,8 @@ include_directories( ${OPENGL_INCLUDE_DIR} )
 
 
 tomahawk_add_plugin(vsxu
-    TYPE infoplugin
-    EXPORT_MACRO INFOPLUGINDLLEXPORT_PRO
+    TYPE viewpage
+    EXPORT_MACRO TOMAHAWK_VIEWPAGE_EXPORT_PRO
     SOURCES
         VSXuPlugin.cpp
         VisualizerWidget.cpp

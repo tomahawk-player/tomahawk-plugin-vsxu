@@ -22,76 +22,56 @@
 #include "VisualizerWidget.h"
 
 #include <utils/Logger.h>
-#include <ViewManager.h>
-
-#include <QCoreApplication>
-
-#include <boost/bind.hpp>
 
 
-Tomahawk::InfoSystem::VSXuPlugin::VSXuPlugin()
+Tomahawk::Widgets::VSXuPlugin::VSXuPlugin()
 {
     tDebug() << Q_FUNC_INFO;
 }
 
 
-Tomahawk::InfoSystem::VSXuPlugin::~VSXuPlugin()
+Tomahawk::Widgets::VSXuPlugin::~VSXuPlugin()
 {
     tDebug() << Q_FUNC_INFO;
 }
 
 
-void
-Tomahawk::InfoSystem::VSXuPlugin::init()
+const QString
+Tomahawk::Widgets::VSXuPlugin::defaultName()
 {
-    tDebug() << Q_FUNC_INFO;
+    return "visualizer";
+}
 
-    // HACK: we wait for Tomahawk (the MainWindow with the ViewManager to be ready) and use the DirectConnection to make addViewPage be called from the GUI thread
-    connect(QCoreApplication::instance(), SIGNAL( tomahawkLoaded() ), SLOT( addViewPageLoader() ), Qt::DirectConnection );
+QString Tomahawk::Widgets::VSXuPlugin::title() const
+{
+    return "Visualizer";
 }
 
 
-void
-Tomahawk::InfoSystem::VSXuPlugin::addViewPageLoader()
+QString Tomahawk::Widgets::VSXuPlugin::description() const
 {
-    tLog() << Q_FUNC_INFO;
-
-    // don't add this twice, for some reason tomahawkLoaded() is fired more than once
-    disconnect(QCoreApplication::instance(), SIGNAL( tomahawkLoaded() ), this, SLOT( addViewPageLoader() ) );
-
-    ViewManager::instance()->addDynamicPage("visualizer",
-                                            "Visualizer",
-                                            ImageRegistry::instance()->icon( RESPATH "images/visualizer.png" ),
-                                            boost::bind( &VSXuPlugin::viewPageLoader, this) );
+    return QString();
 }
 
 
-Tomahawk::ViewPage*
-Tomahawk::InfoSystem::VSXuPlugin::viewPageLoader()
+const QString Tomahawk::Widgets::VSXuPlugin::pixmapPath() const
 {
-    return new VisualizerWidget( 0 );
+    return ( RESPATH "images/visualizer.png" );
 }
 
 
-void
-Tomahawk::InfoSystem::VSXuPlugin::getInfo( Tomahawk::InfoSystem::InfoRequestData requestData )
+bool
+Tomahawk::Widgets::VSXuPlugin::jumpToCurrentTrack()
 {
-    tDebug() << Q_FUNC_INFO;
+    return false;
 }
 
 
-void
-Tomahawk::InfoSystem::VSXuPlugin::notInCacheSlot( Tomahawk::InfoSystem::InfoStringHash criteria, Tomahawk::InfoSystem::InfoRequestData requestData )
+Tomahawk::playlistinterface_ptr Tomahawk::Widgets::VSXuPlugin::playlistInterface() const
 {
-    tDebug() << Q_FUNC_INFO;
+    return playlistinterface_ptr();
 }
 
 
-void
-Tomahawk::InfoSystem::VSXuPlugin::pushInfo( Tomahawk::InfoSystem::InfoPushData pushData )
-{
-    tDebug() << Q_FUNC_INFO;
-}
 
-
-Q_EXPORT_PLUGIN2( Tomahawk::InfoSystem::InfoPlugin, Tomahawk::InfoSystem::VSXuPlugin )
+Q_EXPORT_PLUGIN2( Tomahawk::ViewPagePlugin, Tomahawk::Widgets::VSXuPlugin )
